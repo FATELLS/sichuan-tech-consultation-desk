@@ -4,6 +4,24 @@
 
 本项目采用浏览器/服务器（B/S）方式运行，不需要 GPT 或 ChatGPT 登录。部署完成后，使用普通浏览器打开本机或内网服务器地址即可使用。
 
+## Windows 一行命令安装
+
+在 Windows 10/11 中打开 PowerShell，粘贴下面一行并回车：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm 'https://raw.githubusercontent.com/FATELLS/sichuan-tech-consultation-desk/v1.0.1/install.ps1' | iex"
+```
+
+安装程序会自动：
+
+- 检查 Docker Desktop，未安装时尝试通过 winget 安装
+- 启动 Docker Desktop，并等待服务就绪
+- 安全提示输入 GLM API Key（输入内容不会显示）
+- 下载并部署川科讯
+- 完成健康检查后自动打开 `http://localhost:3000`
+
+如果 Windows 首次安装 Docker 时提示启用 WSL 2 或重启系统，请按提示完成后重新运行同一条命令。
+
 ## 功能
 
 - 按银行、科技型企业、兄弟单位、下级单位、上级部门分类响应
