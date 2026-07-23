@@ -1,0 +1,3 @@
+# 从智谱开放平台获取。请勿把真实密钥提交到 Git 或打进 Docker 镜像。
+GLM_API_KEY=请填写您的_API_KEY
+GLM_API_BASE=https://open.bigmodel.cn/api/coding/paas/v4

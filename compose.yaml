@@ -1,0 +1,31 @@
+name: sichuan-tech-consultation-desk
+
+services:
+  consultation-desk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sichuan-tech-consultation-desk
+    restart: unless-stopped
+    ports:
+      - "${LOCAL_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    volumes:
+      - type: bind
+        source: ./.dev.vars
+        target: /app/.dev.vars
+        read_only: true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/xk-assistant/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
