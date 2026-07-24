@@ -29,36 +29,36 @@ function Test-DockerReady {
   }
 }
 
-Write-Host "川科讯｜Windows 一键安装程序" -ForegroundColor Green
-Write-Host "安装目录：$InstallDirectory"
+Write-Host "ChuanKeXun - Windows Installer" -ForegroundColor Green
+Write-Host "Install directory: $InstallDirectory"
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-  Write-Step "未检测到 Docker Desktop，正在通过 winget 安装"
+  Write-Step "Docker Desktop was not found. Installing it with winget"
 
   if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    throw "当前系统没有 winget。请先在 Microsoft Store 安装应用安装程序，然后重新运行本命令。"
+    throw "winget is not available. Install App Installer from Microsoft Store, then run this command again."
   }
 
   & winget install --exact --id Docker.DockerDesktop `
     --accept-package-agreements --accept-source-agreements
 
   if ($LASTEXITCODE -ne 0) {
-    throw "Docker Desktop 安装失败，请检查 winget 输出后重新运行。"
+    throw "Docker Desktop installation failed. Check the winget output, then run this command again."
   }
 
   Refresh-ProcessPath
 }
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-  throw "Docker 已安装但当前终端尚未识别。请重新打开 PowerShell 后再次运行同一条命令。"
+  throw "Docker is installed but is not visible in this terminal. Reopen PowerShell, then run the same command again."
 }
 
 if (-not (Test-DockerReady)) {
-  Write-Step "正在启动 Docker Desktop"
+  Write-Step "Starting Docker Desktop"
   $dockerDesktop = Join-Path $env:ProgramFiles "Docker\Docker\Docker Desktop.exe"
 
   if (-not (Test-Path $dockerDesktop)) {
-    throw "找不到 Docker Desktop。请完成 Docker Desktop 安装后重新运行。"
+    throw "Docker Desktop could not be found. Complete its installation, then run this command again."
   }
 
   Start-Process $dockerDesktop
@@ -73,11 +73,11 @@ if (-not (Test-DockerReady)) {
   }
 
   if (-not $dockerReady) {
-    throw "Docker Desktop 未能在 10 分钟内启动。若系统提示启用 WSL 2 或重启 Windows，请完成后重新运行同一条命令。"
+    throw "Docker Desktop did not start within 10 minutes. Complete any WSL 2 or Windows restart prompt, then run this command again."
   }
 }
 
-Write-Step "请输入小科助手使用的 GLM API Key"
+Write-Step "Enter the GLM API Key for XiaoKe Assistant"
 $secureKey = Read-Host "GLM API Key" -AsSecureString
 $keyPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
 
@@ -88,10 +88,10 @@ try {
 }
 
 if ([string]::IsNullOrWhiteSpace($apiKey)) {
-  throw "GLM API Key 不能为空。"
+  throw "GLM API Key cannot be empty."
 }
 
-Write-Step "正在下载川科讯 $ReleaseTag"
+Write-Step "Downloading ChuanKeXun $ReleaseTag"
 $temporaryRoot = Join-Path $env:TEMP ("chuankexun-" + [Guid]::NewGuid().ToString("N"))
 $archivePath = Join-Path $temporaryRoot "source.zip"
 $extractPath = Join-Path $temporaryRoot "source"
@@ -104,7 +104,7 @@ Expand-Archive -Path $archivePath -DestinationPath $extractPath -Force
 $sourceDirectory = Get-ChildItem -Path $extractPath -Directory | Select-Object -First 1
 
 if ($null -eq $sourceDirectory) {
-  throw "下载包内容不完整，请稍后重新运行。"
+  throw "The downloaded archive is incomplete. Run this command again later."
 }
 
 New-Item -ItemType Directory -Path $InstallDirectory -Force | Out-Null
@@ -126,18 +126,18 @@ $utf8WithoutBom = New-Object System.Text.UTF8Encoding -ArgumentList $false
 $apiKey = $null
 $configuration = $null
 
-Write-Step "正在构建并启动平台"
+Write-Step "Building and starting the platform"
 Push-Location $InstallDirectory
 try {
   & docker compose up -d --build
   if ($LASTEXITCODE -ne 0) {
-    throw "容器启动失败。请确认 3000 端口未被占用，并查看 Docker Desktop 提示。"
+    throw "The containers failed to start. Make sure port 3000 is free and check Docker Desktop."
   }
 } finally {
   Pop-Location
 }
 
-Write-Step "正在检查平台状态"
+Write-Step "Checking platform health"
 $healthy = $false
 for ($attempt = 0; $attempt -lt 60; $attempt++) {
   try {
@@ -152,11 +152,11 @@ for ($attempt = 0; $attempt -lt 60; $attempt++) {
 }
 
 if (-not $healthy) {
-  throw "平台已经启动，但健康检查暂未通过。请在安装目录执行 docker compose logs 查看原因。"
+  throw "The platform started, but its health check failed. Run docker compose logs in the install directory."
 }
 
 Write-Host ""
-Write-Host "安装部署完成！" -ForegroundColor Green
-Write-Host "访问地址：$SiteUrl"
-Write-Host "安装目录：$InstallDirectory"
+Write-Host "Installation completed." -ForegroundColor Green
+Write-Host "Open: $SiteUrl"
+Write-Host "Install directory: $InstallDirectory"
 Start-Process $SiteUrl
