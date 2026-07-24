@@ -9,7 +9,7 @@
 在 Windows 10/11 中打开 PowerShell，粘贴下面一行并回车：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -Command "irm 'https://raw.githubusercontent.com/FATELLS/sichuan-tech-consultation-desk/v1.0.1/install.ps1' | iex"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm 'https://raw.githubusercontent.com/FATELLS/sichuan-tech-consultation-desk/v1.0.2/install.ps1' | iex"
 ```
 
 安装程序会自动：

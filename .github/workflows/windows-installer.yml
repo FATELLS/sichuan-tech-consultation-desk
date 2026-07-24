@@ -1,0 +1,35 @@
+name: Validate Windows installer
+
+on:
+  push:
+    paths:
+      - install.ps1
+      - .github/workflows/windows-installer.yml
+  pull_request:
+    paths:
+      - install.ps1
+      - .github/workflows/windows-installer.yml
+  workflow_dispatch:
+
+jobs:
+  powershell-syntax:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse install.ps1 with Windows PowerShell
+        shell: powershell
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path "install.ps1"),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+
+          Write-Host "install.ps1 syntax is valid in Windows PowerShell."

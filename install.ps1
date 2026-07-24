@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $Repository = "FATELLS/sichuan-tech-consultation-desk"
-$ReleaseTag = "v1.0.1"
+$ReleaseTag = "v1.0.2"
 $InstallDirectory = Join-Path $env:LOCALAPPDATA "ChuanKeXun"
 $ArchiveUrl = "https://github.com/$Repository/archive/refs/tags/$ReleaseTag.zip"
 $HealthUrl = "http://127.0.0.1:3000/xk-assistant/health"
@@ -36,7 +36,7 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
   Write-Step "未检测到 Docker Desktop，正在通过 winget 安装"
 
   if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    throw "当前系统没有 winget。请先在 Microsoft Store 安装“应用安装程序”，然后重新运行本命令。"
+    throw "当前系统没有 winget。请先在 Microsoft Store 安装应用安装程序，然后重新运行本命令。"
   }
 
   & winget install --exact --id Docker.DockerDesktop `
